@@ -1,0 +1,89 @@
+*yank-git-remote-url*  Copy the remote repository URL of the current file to clipboard
+
+MIT License Copyright (c) 2026 sh1Nome
+
+  Introduction ................................... |yank-git-remote-url-intro|
+  Installation ................................. |yank-git-remote-url-install|
+  Provider .................................... |yank-git-remote-url-provider|
+  Usage .......................................... |yank-git-remote-url-usage|
+  setup() .................................... |yank-git-remote-url-api-setup|
+  yank() ...................................... |yank-git-remote-url-api-yank|
+------------------------------------------------------------------------------
+                                                     *yank-git-remote-url-intro*
+This plugin generates a URL to the current file on your remote Git hosting
+service and copies it to the clipboard. The URL uses commit hashes for
+permanent links.
+
+Features:
+- Permanent URLs using commit hashes (not branch names)
+- Custom provider support for any Git hosting service
+- Copy to clipboard and notify via |vim.notify()|
+- Support for line ranges (visual selection)
+
+------------------------------------------------------------------------------
+                                                   *yank-git-remote-url-install*
+Use your preferred plugin manager.
+
+------------------------------------------------------------------------------
+                                                  *yank-git-remote-url-provider*
+Each provider must implement:
+- `match(host: string): boolean`
+- `build_url(host, repo_path, commit, rel_path, start_line?, end_line?): string`
+
+------------------------------------------------------------------------------
+                                                     *yank-git-remote-url-usage*
+Setup the plugin:
+>lua
+  require('yank-git-remote-url').setup({
+    providers = {
+      {
+        match = function(host)
+          return host:find("github") ~= nil
+        end,
+        build_url = function(host, repo_path, commit,
+            rel_path, start_line, end_line)
+          local base = (
+            "https://%s/%s/blob/%s/%s"
+          ):format(host, repo_path, commit, rel_path)
+          if not start_line then return base end
+          if start_line == end_line then
+            return base .. "#L" .. start_line
+          end
+          return base .. "#L" .. start_line ..
+            "-L" .. end_line
+        end,
+      },
+    }
+  })
+<
+
+Call the function:
+>lua
+  require('yank-git-remote-url').yank(
+    range, start_line, end_line)
+<
+
+------------------------------------------------------------------------------
+                                                 *yank-git-remote-url-api-setup*
+                               `M.setup`({opts})
+Setup the plugin with custom providers
+
+Parameters ~
+{opts} `(table)` Configuration options
+  - providers: table[] Array of provider tables.
+    Each provider must have:
+    - match: fun(host: string): boolean
+    - build_url: fun(host, repo_path, commit,
+      rel_path, start_line?, end_line?): string
+
+------------------------------------------------------------------------------
+                                                  *yank-git-remote-url-api-yank*
+                  `M.yank`({range}, {start_line}, {end_line})
+Copy the current file's remote URL to clipboard
+Parameters ~
+{range} `(integer)` Range indication (0: no range, 2: range selected)
+{start_line} `(integer)` Start line number
+{end_line} `(integer)` End line number
+
+
+ vim:tw=78:ts=8:noet:ft=help:norl:
