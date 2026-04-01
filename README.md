@@ -2,6 +2,8 @@
 
 Copy the remote repository URL of the current file to clipboard.
 
+![demo](./demo/demo.gif)
+
 ## Features
 
 - Permanent URLs using commit hashes (not branch names)
