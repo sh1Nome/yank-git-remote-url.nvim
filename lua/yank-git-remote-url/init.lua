@@ -51,11 +51,17 @@
 ---   })
 --- <
 ---
---- Call the function:
+--- Create a user command to copy the current file's remote URL:
 --- >lua
----   require('yank-git-remote-url').yank(
----     range, start_line, end_line)
+---   vim.api.nvim_create_user_command("YankGitRemoteUrl", function(opts)
+---       require("yank-git-remote-url").yank(
+---         opts.range, opts.line1, opts.line2)
+---   end, { range = true, desc = "Copy remote URL to clipboard" })
 --- <
+---
+--- Usage:
+--- - `:YankGitRemoteUrl` - Copy the entire file's remote URL
+--- - `:10,20YankGitRemoteUrl` - Copy the URL with line range (10-20)
 ---@tag yank-git-remote-url-usage
 ---@toc_entry Usage
 

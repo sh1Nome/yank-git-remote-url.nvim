@@ -4,8 +4,9 @@ Copy the remote repository URL of the current file to clipboard.
 
 ## Features
 
-- Generate permanent URLs using commit hashes
-- Copy to clipboard and notify
+- Permanent URLs using commit hashes (not branch names)
+- Custom provider support for any Git hosting service
+- Copy to clipboard and notify via |vim.notify()|
 - Support for line ranges (visual selection)
 
 ## Installation
