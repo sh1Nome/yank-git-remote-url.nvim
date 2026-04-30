@@ -131,7 +131,7 @@ function M.yank(range, start_line, end_line)
 		:wait().stdout
 		:gsub("%s+$", "")
 	local buf_path = vim.api.nvim_buf_get_name(0)
-	local rel_path = buf_path:sub(#repo_root + 2) -- +2 to skip trailing /
+	local rel_path = buf_path:sub(#repo_root + 2):gsub("\\", "/") -- +2 to skip trailing /
 
 	-- Get commit hash
 	local commit = vim.system({ "git", "rev-parse", "HEAD" }, { text = true }):wait().stdout:gsub("%s+$", "")
