@@ -99,11 +99,16 @@ function M.yank(range, start_line, end_line)
 		return
 	end
 
-	-- Parse host and repo_path from SSH or HTTPS URL
+	-- Parse host and repo_path from SSH, ssh://, or HTTPS URL
 	local host, repo_path
-	local ssh_host, ssh_path = remote_url:match("^git@([^:]+):(.+)$")
-	if ssh_host then
-		host, repo_path = ssh_host, ssh_path
+	local scp_like_host, scp_like_path = remote_url:match("^git@([^:]+):(.+)$")
+	local ssh_uri_host, ssh_uri_path = remote_url:match("^ssh://([^/]+)/(.+)$")
+	if scp_like_host then
+		host, repo_path = scp_like_host, scp_like_path
+	elseif ssh_uri_host then
+		-- Strip optional "user@" prefix and optional ":port" suffix
+		host = ssh_uri_host:gsub("^[^@]+@", ""):gsub(":%d+$", "")
+		repo_path = ssh_uri_path
 	else
 		host, repo_path = remote_url:match("^https?://([^/]+)/(.+)$")
 	end
